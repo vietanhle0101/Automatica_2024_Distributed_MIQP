@@ -1,0 +1,106 @@
+% The constraint \eqref{eq:no-conf} is hard as it includes IF statement and the indicator function.
+% To avoid IF statement, we define an auxiliary binary variable $z_{l,m}(k) = 1$ if $b_{l,m}(k) > 0$ and $z_{l,m}(k) = 0$ if $b_{l,m}(k) = 0$, that leads to following constraints
+% \begin{equation}
+% \begin{split}
+% b_{l,m}(k) &\le M z_{l,m}(k), \\
+% b_{l,m}(k) &\ge \epsilon - M(1 - z_{l,m}(t)),    
+% \end{split}
+% \end{equation}
+% where $\epsilon$ is a small positive value.
+% Then the constraint becomes
+% \begin{equation}
+% l_l(k) + l_m(k) \le 1 + M (1 - z_{l,m} (k))
+% \end{equation}
+% Although both the IF statement and the indicator function (not continuous) can be re-formulated using binary variables, it thus may require too many other auxiliary binary variables.
+% To avoid introducing more binary variables over the control horizon, we can consider $b_{k,l} (k) = b_{k,l} (t)$, $\forall k \in \III_t$, \ie a constant over the control horizon.
+% This is because $b_{k,l} (k) \le b_{k,l} (t)$, $\forall k \in \III_t$, so we will basically consider more conservative constraints.
+
+% \begin{lemma}
+% $b_{k,l} (k) \le b_{k,l} (t)$, $\forall k \in \III_t$.
+% \end{lemma}
+
+
+
+
+\section{Problem Formulation \#2}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.46\textwidth]{figs/sigmoid.pdf}
+% \caption{Caption}
+% \label{fig:enter-label}
+\end{figure}
+
+\textbf{Fact:} Maximum number of switches is $S = \ceil{N/Q}$. Usually just one light switch over the control horizon as control horizon is not longer than the minimum gap between light switches.
+
+This approach will formulate the problem without using integer variables.
+We use the sigmoid function to approximate the traffic signal.
+
+\begin{itemize}
+\item Let $t$ be the current time step and $k_s  \in \RRplus$ (we treat $k_s$ as real variables) be the time so that the traffic light switches at $t+k_s$, with $0 \le k_s \le H$, we approximate the traffic light state of lane $l$ from $t$ to $t+H$ as follows
+\begin{equation}
+l_l (k) =
+\begin{cases}
+\mathrm{sigmoid} (k-k_s), & \text{if } l_l (t) = 0 \\
+1 - \mathrm{sigmoid} (k-k_s), & \text{otherwise}
+\end{cases}     
+\end{equation}
+for $k \in \III_t$, which implies that $l_l (k) \ge \frac{1}{2}$ indicates green light and $l_l (k) < \frac{1}{2}$ indicates red light. 
+
+\item Constraints for the minimum time between traffic light switches
+\begin{equation}
+k_s - k_{0} \ge Q,
+\end{equation}
+where $k_0$ is the time of the last traffic light switch (known).
+
+\item No running on red light: Can still use \eqref{eq:red-stop-bigM}, but must choose $M$ appropriately given the shape of sigmoid function, \eg ${M = 10^5 < 1/\rm{sigmoid}(-1.0, \mu = 10.0)}$.
+This constraint also applies to HDVs
+
+\item Lateral collision avoidance constraint for two CAVs if the lights for their lanes are both green
+\begin{equation}
+M(2-l_l(k)-l_m(k)) + \abs{p_{l,i}(k) - p_{l,m}^{\text{conf}}}^2 + \abs{p_{m,j}(k) - p_{l,m}^{\text{conf}}}^2 > (d^{\text{safe}})^2 
+\end{equation}
+
+\item Constraints to guarantee that there is no lateral conflicts between a CAV and an HDV or between two HDVs. 
+The correct constraint should be:
+\begin{equation}
+\min (l_l(k), l_m(k)) \le 0.5
+\end{equation}
+and the approximate it by a smoothed min function
+\begin{equation}
+\mathrm{smin}(x, y) = \frac{-1}{\alpha} \log (\exp{(\alpha x)} + \exp{(\alpha y)})
+\end{equation}
+
+Another way is to approximate it as:
+\begin{equation}
+l_l (k) + l_m (k) \le 1, \; \forall k \in \III_t, \;\text{if}\; b_{l,m} (t) > 0 
+\end{equation}
+
+If we use sigmoid function $0 < l_l, l_m < 1$, the constraint may be infeasible due to approximation errors.
+Can use slack variable approach to handle infeasibility caused by the approximation errors.
+\end{itemize}
+
+The final optimization problem:
+\begin{subequations}
+\begin{align}
+\minimize & \quad \sum_{l=1}^{12} \sum_{k = t}^{t+H-1} - n_{\text{veh},l}\, l_l(k) +  \sum_{i=1}^{n^C_l} \omega_v \big( v_{l,i} (k+1) - v_{\max} \big)^2 + \omega_u u^2_{l,i} (k) \\
+\text{subject to} & \quad 
+l_l (k) =
+\begin{cases}
+\mathrm{sigmoid} (k-k_s), & \text{if } l_l (t) = 0, \\
+1 - \mathrm{sigmoid} (k-k_s), & \text{otherwise,}
+\end{cases} \\
+& \quad k_s - k_{0} \ge Q, \\
+& \quad l_l(k) + l_m(k) \le 1 \;\text{if}\; b_{l,m} (t) > 0, \\
+& \quad v_{\min} \le v_{l,i} (k+1) \le  v_{\max}, \; u_{\min} \le u_{l,i} (k+1) \le  u_{\max} \\
+& \quad p_{l,i} (k+1) \le p_l^{\mathrm{stop}} + M l_l(k), \\
+& \quad p_{l,i} (k+1) + \rho v_{l,i} (k+1) + d_{min} \le p_{i-1,l} (k+1), \\
+& \quad M(2-l_l(k)-l_m(k)) + (p_{l,i}(k+1) - p_{l,m}^{\text{conf}})^2 + (p_{m,j}(k+1) - p_{l,m}^{\text{conf}})^2 > (d^{\text{lat}})^2,
+\end{align}
+\end{subequations}
+in which the constraints hold for all $k \in \III_t$.
+
+\Note{Some constraints are considered as soft constraints by using slack variables.}
+
+\Note{We can avoid integer variables in this approach but it results in nonlinear programming. Nonlinearity comes from the sigmoid function and the lateral safety constraints. However, the the lateral safety constraints can be convexified by some ways. 
+}

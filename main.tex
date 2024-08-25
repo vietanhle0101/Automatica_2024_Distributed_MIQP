@@ -1,0 +1,645 @@
+\documentclass[twocolumn,amsthm]{autart}%
+
+% Above is the standard document class.  If would like to use document
+% class differently according to PDF or not, use the following:
+% \RequirePackage{ifpdf}
+% \ifpdf
+% \documentclass[pdftex,. . . ]{. . . }
+% \else
+% \documentclass[. . . ]{. . . }
+% \fi
+
+%%%% PDF support
+% Check if in PDF mode or not.  Usage: \\ifpdf ... \else ... \fi
+\usepackage{ifpdf}
+
+
+%%%% Graphic packages
+% TODO: add more options/settings to this package
+\usepackage{graphicx}
+\usepackage{subcaption}
+\graphicspath{{figs/}}
+
+% If you don't want italic remark
+% \newcounter{remark}
+% \newenvironment{remark}{%
+% \par\vspace{3pt}\noindent\refstepcounter{remark}\textbf{Remark~\theremark:}}%
+% {\par\endtrivlist\unskip}
+
+% The standard LaTeX font is Computer Modern. Here, we will load the New
+% Century Schoolbook font instead. 
+%\usepackage{newcent}
+% Other popular options are (name followed by code)
+% - Times:
+% \usepackage{mathptmx}  % **
+% - Palatino / Palladio: or \usepackage{tgpagella}
+% \usepackage[sc]{mathpazo}  % **
+% \linespread{1.05}         % Palladio needs more leading (space between lines)
+% - Kp-fonts:
+%\usepackage{kpfonts}  % *
+% - GFS Didot:
+%\usepackage{gfsdidot} % **
+% - Utopia:
+%\usepackage[utopia]{mathdesign} % *
+% - Venturis:
+%\usepackage{venturis} % **
+% - Libertine:
+%\usepackage{libertine} % **
+% - Bitstream Vera / Dejavu:
+% \usepackage{dejavu} % *
+
+% Some other fonts that I know but haven't tested the quality: read texdoc psnfss2e
+% - Helvetica
+% \usepackage{helvet}
+% - Avant Garde
+% \usepackage{avant}
+% - Bookman: Bookman for roman, Avant Garde for sans serif, and Courier
+% \usepackage{bookman}
+% - New Century: New Century for roman, Avant Garde for sans serif, and Courier
+% \usepackage{newcent}
+% - Charter
+% \usepackage{charter}
+
+% A little later, we will want to test something and behave 
+% differently depending on the result. So the "ifthen" package is loaded
+% to help out.
+%\usepackage{ifthen}
+
+
+% In TeX, fonts are "encoded", with each space in the font containing
+% a different character. For most European users, the best setting is
+% the "T1" (modern) system, which is set up next.
+% \usepackage[T1]{fontenc}
+
+% The fancyhdr package will allow us to alter the appearance of the
+% header and footer of the page easily. This is much easier than trying
+% to use the LaTeX kernel methods.
+% \usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyhead[R]{Viet-Anh Le}
+% \fancyhead[L]{Technical Notes}
+% \fancyfoot[R]{Page \thepage}
+
+\usepackage{parskip}
+%\parskip=3mm   % Set the skip size between paragraphs
+
+%%%% Math support (AMS math packages, symbols...)
+% If you want to flush all equations to the left, or to set other
+% options of amsmath, use the following line:
+% \usepackage[fleqn]{amsmath}
+\usepackage{mathtools,amsmath}
+% Uncomment line below to allow page break inside multi-line equations
+% \interdisplaylinepenalty=2500
+
+% Additional math packages
+\usepackage{amsfonts,amssymb}
+\usepackage{bm} % for bold symbols like \bm{\alpha} or {\bm \alpha\beta}
+\usepackage{mathrsfs}  % Formal math script font \mathscr
+\usepackage{cases}  % Better than amsmath's cases environment
+\usepackage{amsmath}
+\usepackage{comment}
+
+% indent the first paragraph after a section tag
+\usepackage{indentfirst}
+\setlength{\parindent}{5mm}
+
+%%%% SI Unit support: should always use to typeset numeric data
+% With option per-mode=symbol: kW/s, without it: kW s^{-1}
+% Quick usage:
+%   \num{1+-2i}
+%   \num{.3e45}
+%   \SI{number}{unit} or \si{unit}
+% where unit is like:
+%   kg.m.s^{-1} or \kilogram\metre\per\second
+%   \si[per-mode=symbol]{\kilogram\metre\per\ampere\per\second} for
+%        kg m / (A s)
+\usepackage[per-mode=symbol]{siunitx}
+
+% \usepackage{subfig}  % Sub-figures
+% \usepackage{color}   % Support colors
+\usepackage[svgnames, rgb]{xcolor}  % Support for color with standard names
+
+% PGF/TikZ
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes,positioning}
+% Some other TikZ libraries
+% \usetikzlibrary{automata,calc,matrix}
+% \usetikzlibrary{circuits.logic.US,circuits.ee.IEC}
+% \usetikzlibrary{shapes.geometric,shapes.symbols,shapes.arrows}
+
+% PGFplots to plot pretty graphs of data or functions
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+% Define lengths for figure sizes, for PGFPlots figures exported from other tools
+% \newlength{\figheight}
+% \newlength{\figwidth}
+
+% \usepackage{wrapfig}  $ Wrap text around figures
+
+% \usepackage{vaucanson-g}  % Draw state machines
+
+
+%%%% Special typesetting
+% Algorithms
+\usepackage[ruled]{algorithm}    % For creating floating algorithms, in the algorithms bundle
+
+% The followings are packages for creating actual algorithms
+\usepackage{algorithmic}  % Easy to use, Pascal-like, less flexible, in the algorithms bundle
+%\usepackage{algorithm2e}  % More flexible, more like Pascal
+%\usepackage{algpseudocode}  % In the algorithmicx package, flexible, more math-like
+
+% For typesetting source code
+%\usepackage{listings}
+
+
+% Notes, comments
+% \usepackage{todonotes}
+% \usepackage{verbatim}   % better support for verbatims, comment environment
+
+%%%% Customizations
+
+% Customization of enumerate, itemize, description
+%\usepackage{enumerate}  % Customize enumerate only
+%\usepackage{enumitem}   % Customize enumerate, itemize, description
+
+\usepackage{cite}  % Fix issues with \cite handling numbers
+\usepackage{array}  % Better tabular and array
+\usepackage{booktabs}           % More beautiful tables
+
+%%%% Set-up hyperref for hyperlinks, etc.
+%%%% This should always come last in the preamble.
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+% \newtheorem{remark}{Remark}
+% \newtheorem{problem}{Problem}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{struct_result}{Structural Result}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\usepackage[extramath,probability,reviewmark]{mylatexdefs}
+
+\DeclareMathOperator*{\stateinput}{
+\begin{bmatrix}
+\delta \mathbf{x}_{t} \\
+\delta \mathbf{u}_{t}
+\end{bmatrix}
+}
+
+
+\input{defs}
+
+% The default \usepackage{hyperref} should work automatically.
+% See hyperref for more options (visual, backlinks, etc.)
+% Note that hyperref with pdftex seems fragile, especially with special symbols in section titles.
+\ifpdf
+  \usepackage[pdftex]{hyperref}
+\else
+  \usepackage[dvips]{hyperref}  % or dvipdfm
+\fi
+
+%%%%% BEGIN OF DOCUMENT
+
+\begin{document}
+\begin{frontmatter}
+%\runtitle{Insert a suggested running title}  % Running title for regular
+% papers but only if the title
+% is over 5 words. Running title
+% is not shown in output.
+\title{Distributed Optimization Algorithm for Mixed Integer Quadratic Programming} % Title, preferably not more
+% than 10 words. \thanksref{footnoteinfo}
+% \thanks[footnoteinfo]{This research was supported in part by ARPAE's NEXTCAR program under the award number DE-AR0000796 and by the Delaware Energy Institute (DEI).}
+
+\author[Paestum]{Viet-Anh Le}\ead{vietale@udel.edu},  % (ead) as shown
+\author[Paestum]{Andreas A. Malikopoulos}\ead{andreas@udel.edu}
+\address[Paestum]{Department of Mechanical Engineering, University of Delaware, 126 Spencer Lab, 130 Academy Street, Newark, DE, 19716, USA}  % Please supply
+%\address[Rome]{Division of Systems Engineering and Center for Information and Systems Engineering, Boston University, 15 Saint Mary's Street,
+%Brookline, MA, 02446, USA}             % full addresses
+%\address[Baiae]{The White House, Baiae}        % here.
+\begin{keyword}                           % Five to ten keywords,
+.
+\end{keyword}                             % keyword list or with the
+% help of the Automatica
+% keyword wizard
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+This is my note on the idea.
+
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{frontmatter}
+
+% DO NOT ENTER CONTENTS DIRECTLY HERE
+% PUT THEM IN SEPARATE TEX FILES, AND \input{part.tex} HERE
+
+\section{Introduction}
+
+\subsection{Literature Review on Mixed-Integer Optimization}
+
+Review on mixed-integer optimization: \cite[Sec. 5.2]{ioan2021mixed}.
+
+% \begin{itemize}
+% \item Combinatorial Integral Approximation (CIA) \cite{burger2023gauss}.
+% \item Branch-and-bound: \cite{stellato2018embedded}.
+ 
+% \end{itemize}
+
+% \Note{An idea is to combine CIA with distributed optimization algorithm like ADMM.}
+
+% The CIA algorithm may involve three stages:
+% \begin{enumerate}
+% \item A relaxed version where the constraints for integer variables are replaced by box constraints is solved.
+% \item The solutions for integer variables are
+% obtained by minimizing some distance function.
+% \item The integer controls are fixed and the optimization problem is solved again.
+% \end{enumerate}
+
+% In steps 1 and 3, the problems are QP so they can be solved efficiently with distributed optimization algorithms such as ADMM.
+
+\cite{vujanic2016decomposition}, \cite{falsone2019decentralized}: A decomposition method for large-scale MILPs. 
+A dualization approach with tightening of the coupling constraint was proposed to determine a feasible solution and provide a bound on the duality gap.
+However, a central unit is still needed.
+\cite{falsone2018distributed} extended to a distributed framework where agents exchange information only with their neighbors and no central unit is needed.
+
+\cite{camisa2018primal}, \cite{camisa2021distributed}: 
+Distributed algorithm based on primal decomposition.
+
+% \cite{falsone2020tracking}: ADMM for distributed optimization with coupled constraints, no integer variables.
+
+\cite{testa2019distributed}:
+
+% \cite{liu2020efficient}:
+
+The above papers considered MILPs, but the methods cannot be extended to MIQPs. The following papers consider MIQPs.
+
+\cite{takapoui2020simple}: Use ADMM to solve MIQP, but not distributed.
+% \Note{Even for a simple problem like integer linear programming, ADMM fails to converge or converge to the wrong optimal solution \cite{takapoui2020simple}.}
+
+\cite{liu2022distributed}: MI optimization with coupled constraints, used relaxation and ADMM.
+% This paper is pretty relevant to our initial algorithm.
+
+\cite{liu2021distributed}: Considered MIQP with coupling constraints, and proposed a three-stage algorithm to solve the problem. However, the algorithm require an initial feasible guess of the solution.
+
+\cite{sun2018distributed}: Decouple the large-scale problem into subproblems, each local update is a convex projection subproblem except one for the integrality constraint. Then a distributed projected subgradient algorithm is used.
+
+\cite{yfantis2023hierarchical}, \cite{klostermeier2024numerical}: Dual decomposition-based distributed optimization for constraint-coupled mixed-integer programs.
+
+% \cite{burger2023gauss}: CIA applied to MINLP, not distributed. 
+
+\section{Problem Formulation}
+\begin{definition}
+Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
+For each \agent{i}, $i \in \VVV$, let $\NNN_i = \{j \in \VVV \;|\; (i,j) \in \EEE\}$ be the set of its neighbors.
+\end{definition}
+
+\begin{definition}
+Let $\bbsym{x}_i$ be, $f_i (\bbsym{x}_i)$ be the local objective function,
+where
+\[
+f_i (\bbsym{x}_i) = \bbsym{x}_i^\top \bbsym{Q}_i \bbsym{x}_i + \bbsym{q}_i^\top \bbsym{x}_i.
+\]
+We represent the coupling constraint between \agent{i} and \agent{j} in the following form
+\[
+\bbsym{A}^{j}_{i} \bbsym{x}_i + \bbsym{A}^{i}_{j} \bbsym{x}_j \le \bbsym{b}_{ij},
+\]
+\end{definition}
+
+\section{Distributed Mixed-Integer Optimization with Proximal ADMM with Sequential Convex Programming}
+
+First, we introduce an auxiliary variable $\bbsym{y}_{i}^{j}$ for \agent{i} involved in coupling constraint with \agent{j} and formulate the following equivalent problem,
+\begin{equation}
+\begin{split}
+\underset{\bbsym{x}_i \in \XXX_i}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
+\text{subject to} & \quad \bbsym{A}^{j}_{i} \bbsym{x}_i \le \bbsym{y}_{i}^{j}, \, \forall j \in \NNN_i, \\
+& \quad \bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} = \bbsym{b}_{ij},\, \forall (i,j) \in \EEE.
+\end{split}
+\end{equation}
+where.
+We represent the local constraints in the following compact form, 
+\begin{equation}
+\bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i},
+\end{equation}
+where $\bbsym{A}_{i}^\top = [(\bbsym{A}_{i}^{j})^\top]_{j \in \NNN_i}$, $\bbsym{y}_{i}^\top = [(\bbsym{y}_{i}^{j})^\top]_{j \in \NNN_i}$
+
+To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
+At each iteration $t$, we keep a mixed-integer-valued vector $\tilde{\bbsym{x}}_i^{(t)} \in \XXX_i$ and an real-valued solution of the relaxed problem $\bar{\bbsym{x}}_i^{(t)} \in \bar{\XXX}_i$ where $\bar{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
+We define $\Delta (\bar{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\bar{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\tilde{\bbsym{x}}_i$.
+The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
+
+The augmented Lagrangian for the problem is formulated as follows
+\begin{equation}
+\begin{multlined}
+\LLL ( \{ \bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i} \}_{i\in \VVV}) = \sum_{i \in \VVV} \Big[ f_i (\bbsym{x}_i) + \II (\bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i}) \\
++ \sum_{j \in \NNN_i} (\bbsym{\lambda}_{i}^j)^\top (\bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} - \bbsym{b}_{ij}) \Big] 
++ \frac{\rho}{2} \sum_{(i,j) \in \EEE} \norm{\bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} - \bbsym{b}_{ij}}_2^2
+\end{multlined}
+\end{equation}
+where $\bbsym{\lambda}_{i}^j$ are the dual variables (Lagrangian multipliers), $\bbsym{\lambda}_{i}^\top = [(\bbsym{\lambda}_{i}^j)^\top]_{j \in \NNN_i}$ and $\rho$ is a positive constant.
+
+The algorithm consists of the following steps
+\begin{itemize}
+\item \Agent{i} solve the local problem \eqref{eq:local_update}.
+% \begin{figure*}
+\begin{equation}
+\label{eq:local_update}
+\begin{split}
+\bar{\bbsym{x}}_i^{(t+1)}, {\bbsym{y}}_i^{(t+1)} =\; & \underset{\bbsym{x}_i \in \bar{\XXX}_i, \bbsym{y}_i}{\argmin}  \; \LLL_i (\bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i}^{(t)}) \\
+& + \beta^{(t)} \Big( \norm{\bbsym{x}_i - \tilde{\bbsym{x}}_i^{(t)}}_2^2 + \norm{\bbsym{y}_i - \bbsym{y}_i^{(t)}}_2^2 \Big) , \\
+& \text{subject to} \; \bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i},
+\end{split}
+\end{equation}
+where $\beta^{(t)} \in \RRplus$ is a penalty weight and 
+\begin{equation}
+\LLL_i (\bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i}) =    
+\end{equation}
+% \end{figure*}
+
+\item \Agent{i} transmits ${\bbsym{y}}_i^{j,(t+1)}$ to \agent{j}.
+\item Update the dual variables $\bbsym{\lambda}_{i}$ by 
+\begin{equation}
+\bbsym{\lambda}_{i}^{j,(t+1)} = \bbsym{\lambda}_{i}^{j,(t)} + \gamma \rho \big( \bbsym{y}_{i}^{j,(t+1)} + \bbsym{y}_{j}^{i,(t+1)} - \bbsym{b}_{ij} \big).
+\end{equation}
+where $\alpha^{(t)} \in \RRplus$ is the step-size.
+\item \Agent{i} transmits $\bbsym{\lambda}_i^{j,(t+1)}$ to \agent{j}.
+\item Compute $\tilde{\bbsym{x}}_i^{(t+1)}$ from $\bbsym{x}_i^{(t+1)}$ by rounding operator (transform a real-valued solution into an integer one).
+\end{itemize}
+
+\Note{If $\bbsym{\lambda}_i^{j,(t+1)} = \bbsym{\lambda}_j^{i,(t+1)}$, then we do not need the commucation for the dual variables.}
+
+\Note{In this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
+
+\textbf{Convergence Analysis}
+
+To prove convergence, we need: (1) identifying a so-called sufficiently decreasing Lyapunov function (usually the augmented Lagrangian); and
+(2) establishing the lower boundness property of the Lyapunov
+function \cite{yang2022proximal}.
+
+Dinh \etal \cite{dinh2013dual} proposed sequential convex programming (SCP) scheme based on penalty function approach to handle nonconvexity.
+\cite{yang2022proximal} shows the convergence of proximal ADMM for nonconvex and nonsmooth optimization.
+
+Some papers about feasibility pump in mixed-integer optimization: \cite{boland2012new} shows that feasibility pump might be equivalent to the proximal point algorithm.
+\cite{geissler2017penalty} shows that feasibility pumps can be seen as alternating direction methods.
+
+\cite[Section V]{deng2017parallel} discussed the connection between the Proximal Jacobian ADMM Algorithm and the proximal point algorithm.
+
+\Note{In what follows, I just summarize the proof in \cite{deng2017parallel} for original Jacobi-Proximal ADMM.}
+
+\begin{assumption}
+There exists a saddle point $(\bbsym{x}^{*}, \bbsym{\lambda}^{*})$
+\end{assumption}
+
+To simplify the notation, we let
+\begin{equation}
+\bbsym{P} = 
+\begin{pmatrix}
+\bbsym{P}_{1} + \rho \bbsym{A}_i^\top \bbsym{A}_i \\
+& \ddots \\
+& & \bbsym{P}_N + \rho \bbsym{A}_N^\top \bbsym{A}_N
+\end{pmatrix}
+\end{equation}
+
+% Define $\Delta \bbsym{\lambda}^{(t)} = (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*})$
+% and $\Delta \bbsym{x}^{(t)} = (\bbsym{x}^{(t)}-\bbsym{x}^{*})$,
+We consider the following Lyapunov function
+\begin{equation}
+\begin{multlined}
+\Phi^{(t)} = \norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
++ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}}_2^2 \\
++ \eta \norm{\xtil^{(t)} - \bbsym{x}^{(t)}}_2^2
+\end{multlined}
+\end{equation}
+where $\eta > 0$.
+
+\begin{lemma}
+For $t \ge 1$, we have
+\begin{equation}
+\begin{multlined}
+\Phi^{(t)} - \Phi^{(t+1)}  \\
+\ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}-\eta \bbsym{I}}^2
++ \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
++ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)})
++ \eta \norm{\xtil^{(k)}-\bbsym{x}^{(k)}}_2^2
+\end{multlined}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Sketch:
+
+From step 1 of the algorithm:
+
+Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$ (step 2 of the algorithm), we have
+\begin{equation}
+\norm{\xtil^{(t+1)} - \bbsym{x}^{(t+1)}}_2^2 
+\le \norm{\xtil^{(t)} - \bbsym{x}^{(t+1)}}_2^2 
+\end{equation}
+\end{proof}
+% \begin{theorem}
+% \end{theorem}
+
+\begin{comment}
+\section{Optimization Algorithm}
+
+We need to develop an optimization algorithm to efficiently solve not in centralized manner.
+Two approaches have been found in the literature:
+
+\begin{itemize}
+\item Distributed optimization: \cite{huang2023decentralized}.
+\item Sequential computation with priority assignment: \cite{katriniok2022fully}, \cite{scheffe2023reducing}.
+\end{itemize}
+
+Let assume that the TLC units keep the trajectory prediction of HDVs on each lane.
+
+\section{Prediction Model for HDVs}
+
+\Note{Will start doing simulation with constant acceleration model first.}
+
+% If we consider the traffic light at time $t$ is known
+
+\begin{itemize}
+\item The human driving behavior may follow different modes (\eg car-following, constant velocity, or constant acceleration), and the human control policy in each mode is parameterized by parameters (\eg car-following model's parameters) that describe different human driving styles.
+
+% \item Since there is no lateral conflict involving HDVs, we can use a car-following model to predict the future trajectories of HDVs.
+
+% \item Can use interacting multi-modal Kalman filter for predicting HDV's trajectory with three modes: car-following, constant velocity, or stop by the traffic light.
+
+\item Note that even if the original physical system is a linear system, the dynamics of the new system with parameters as augmented states can be nonlinear.
+
+\item Some references: \cite{lefkopoulos2020interaction}, \cite{hu2022active}, \cite{arcari2020dual}.
+\end{itemize}
+
+Let $\MMM = \{ M_1, \dots, M_N \}$ be the set of operating modes, $M \in \MMM$ be the mode with associated uncertain parameters in a vector $\boldsymbol{\theta}^M$.
+The dynamics of the vehicles under each mode can be given by
+\begin{equation}
+M \;:\; \bbsym{x}(k+1) = \bbsym{f}^M (\bbsym{x}(k), \bbsym{z}(k); \bbsym{\theta}^M) + \bbsym{w}^M (k),
+\end{equation}
+where $\bbsym{z}(k)$ is the vector of context variables, \eg states of preceding vehicles or states of the traffic light.
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.45\textwidth]{figs/singlelane.png}
+% % \caption{Caption}
+% % \label{fig:enter-label}
+% \end{figure}
+
+We need to identify both the operating mode $M$ and the parameters $\boldsymbol{\theta}^M$, \ie compute $p \big( M, \bbsym{\theta}^M \,|\, \III(k) \big)$ where $\III(k)$ is the vector of available information at time $k$, \ie $\III(k+1)^\top = [\III(k)^\top, \bbsym{x} (k+1)^\top, \bbsym{z} (k+1)^\top]$. 
+The posterior joint distribution of mode $M$ and $\bbsym{\theta}^M$ is given by
+\begin{equation}
+p \big( M, \bbsym{\theta}^M \,|\, \III(k+1) \big)
+= p \big( \bbsym{\theta}^M \,|\, \III(k+1), M \big) 
+p \big( M \,|\, \III(k+1) \big).
+\end{equation}
+
+If the system states are fully known, and the dynamics can be represented in the following form:
+\begin{equation*}
+M \;:\; \bbsym{x}(k+1) = \bbsym{f}_0^M (\bbsym{x}(k), \bbsym{z}(k)) + \bbsym{\Phi}^M (\bbsym{x}(k), \bbsym{z}(k))\,  \bbsym{\theta}^M + \bbsym{w}^M (k),
+\end{equation*}
+then we have a closed-form solution from \cite{arcari2020dual}.
+
+For our problem: (1) car-following, (2) constant velocity, or (3) constant acceleration.
+
+\begin{itemize}
+\item Mode 1: Using CTH-RV car-following model:
+\begin{equation}
+u_i(k) = \alpha (\Delta p_i(k) - \rho v_i(k)) + \beta \Delta v_t(k)
+\end{equation}
+
+Thus
+\begin{equation}
+\begin{split}
+p_i(k+1) &= p_i(k) + \tau v_i(k) + \frac{1}{2} \tau^2 u_i (k) \\
+v_i(k+1) &= v_i(k) + \tau u_i(k) \\
+u_i(k) & = \theta_1^{M_1} (p_{i-1}(k) - p_{i}(k) -d_{\min}) + \theta_2^{M_1} v_i(k) + \theta_3^{M_1} (v_{i-1}(k) - v_i(k))
+\end{split}
+\end{equation}
+where $d_{\min}$ is a constant minimum inter-vehicle distance.
+
+Re-write in matrix form:
+\[\bbsym{x}_i (k) = [p_i (k), v_i (k)]^\top,\]
+\[\bbsym{z}_i (k) = \bbsym{x}_{i-1} (k),\]
+\[\bbsym{f}_0^{M_1} = [p_i (k) + \tau v_i(k), v_i (k)]^\top\]
+\[\bbsym{\Phi}^{M_1} = \begin{bmatrix}
+\frac{1}{2} \tau^2 (p_{i-1}(k) - p_{i}(k) -d_{\min}) & \frac{1}{2} \tau^2 v_i(k) & \frac{1}{2} \tau^2 (v_{i-1}(k) - v_i(k)) \\ 
+\tau (p_{i-1}(k) - p_{i}(k) -d_{\min}) & \tau v_i(k) & \tau (v_{i-1}(k) - v_i(k))
+\end{bmatrix}\]
+
+\item Constant velocity:
+\begin{equation}
+\begin{split}
+p_i(k+1) &= p_i(k) + \tau v_i(k) + \frac{1}{2} \tau^2 u_i (k) \\
+v_i(k+1) &= v_i(k) + \tau u_i(k) \\
+u_i(k) &= k_v (v^{\text{ref}} - v_i(k)) = \theta_1^{M_2} + \theta_2^{M_2} v_i(k)
+\end{split}
+\end{equation}
+
+Re-write in matrix form:
+\[\bbsym{\Phi}^{M_2} = \begin{bmatrix}
+\frac{1}{2} \tau^2 & \frac{1}{2} \tau^2 v_i(k) \\ 
+\tau & \tau v_i(k) 
+\end{bmatrix}\]
+
+\item Constant acceleration:
+\begin{equation}
+\begin{split}
+p_i(k+1) &= p_i(k) + \tau v_i(k) + \frac{1}{2} \tau^2 u_i (k) \\
+v_i(k+1) &= v_i(k) + \tau u_i(k) \\
+u_i(k) &= a^{\text{ref}} = \theta_1^{M_3}
+\end{split}
+\end{equation}
+
+Re-write in matrix form:
+\[\bbsym{\Phi}^{M_3} = \begin{bmatrix}
+\frac{1}{2} \tau^2 \\ 
+\tau 
+\end{bmatrix}\]
+
+\end{itemize}
+
+\Note{Actually constant velocity can be merged with constant acceleration model.}
+
+Bayesian estimation:
+\begin{subequations} 
+\label{eq:Bayesian_update}
+\begin{align}
+p(\bbsym{\theta}^{M}\,|\, \III(k+1), M) &= \frac{p(\bbsym{x}(k+1) \,|\, \bbsym{z}(k), \III_k, M, \bbsym{\theta}^{M}) p(\bbsym{\theta}^{M}\,|\,  \III(k), M)}{p(\bbsym{x}(k+1) \,|\, \bbsym{z}(k), \III(k), M)}, \label{eq:Bayesian_update_param}
+\\
+p(M \,|\, \III(k+1)) & = \frac{p(\bbsym{x}(k+1) \,|\, \bbsym{z}(k), \III(k), M) p(M \,|\, \III(k))}{p(\bbsym{x}(k+1) \, | \, \bbsym{z}(k) ,\III(k))}.
+\label{eq:Bayesian_update_mode}
+\end{align}
+\end{subequations}
+
+\textbf{For parameter estimation}
+
+Assume that the distribution of parameter $\bbsym{\theta}^M$ at time step $k$ is given by a normal distribution
+\begin{equation*}
+p(\bbsym{\theta}^M \,|\, \III(k) , M) =  \NNN \big( \mu_{\bbsym{\theta}}^M (k), \Sigma_{\bbsym{\theta}}^M (k) ).
+\end{equation*}
+The likelihood of the state at time step $k+1$ can be computed as
+\begin{equation*}
+p(\bbsym{x} (k+1) \,|\, \bbsym{z} (k), \III (k), M, \bbsym{\theta}^M) 
+= \NNN \big( \bbsym{\Phi}^M( \bbsym{x} (k),\bbsym{z} (k) ) \bbsym{\theta}^M, \ \Sigma^M_w \big).
+\end{equation*}
+
+The update equations for parameter mean and variance:
+\begin{equation}
+\begin{split}
+& \left[ \Sigma_{\theta}^M (k+1) \right]^{-1} = \left[ \Sigma_{\theta}^M (k) \right]^{-1} + \Phi^M(\bbsym{x}(k), \bbsym{z}(k))^T \ \left[ \Sigma_w^{M} \right]^{-1} \ \Phi^M(\bbsym{x}(k), \bbsym{z}(k)), \\
+& \mu_{\theta}^M (k+1) = \Sigma_{\theta}^M (k+1) \left( \left[ \Sigma_{\theta}^M (k) \right]^{-1} \mu_{\theta}^M (k) + \Phi^M(\bbsym{x}(k),\bbsym{z}(k))^T \ \left[ \Sigma_w^{M}\right]^{-1} \ \bbsym{x}(k+1) \right).
+\end{split}
+\end{equation}
+
+That is equivalent to a Kalman filter for each mode.
+
+
+\textbf{For mode estimation}
+
+\begin{multline}
+p(x(k+1) \,|\, z(k), \III(k), M) = \NNN( \Phi^M(x(k),z(k)) \mu_{\theta}^M(k), \\ \Sigma^M_w \ + \ \Phi^M(x(k),z(k)) \ \Sigma^M_{\theta}(k) \Phi^M(x(k),z(k))^T ),    
+\end{multline}
+
+Note that the denominator in \eqref{eq:Bayesian_update_mode} is computed by 
+\begin{equation}
+p(\bbsym{x}(k+1) \, | \, \bbsym{z}(k) ,\III(k))
+= \sum_{n=1}^{N} p(x(k+1) \,|\, z(k), \III(k), M_n) p( M_n \,|\, \III(k)).
+\end{equation}
+
+Finally, we choose the mode with maximum probability $p \big( M \,|\, \III(k+1) \big)$.
+
+
+\begin{equation}
+p(M \,|\, \III(k+1)) = \frac{\NNN( \Phi^M(x(k),u(k)) \mu_{\gamma,k}^M , \Sigma^M_w + \Phi^M(x(k),u(k))  \Sigma^M_{\gamma,k} \Phi^M(x(k),u(k))^T )  p(M|\III(k))}{\sum_{m=1}^{n_m}{ \NNN( \Phi^{M^m}(x(k),u(k)) \mu_{\gamma,k}^{M^m} , \Sigma^{M^m}_w + \Phi^{M^m}(x(k),u(k)) \  \Sigma^{M^m}_{\gamma,k} \Phi^{M^m}(x(k),u(k))^T ) \ p(M^{m}|\III(k)) } },
+\end{equation}
+
+\Note{If the states are not fully observable. Should read: \cite{heirung2019model}.}
+
+\Note{Even if the system model linear, the model for augmented states is nonlinear. IMM-KF \cite{lefkopoulos2020interaction} only work if the model with augmented states is linear.}
+\end{comment}
+
+
+
+
+
+
+%%%%  REFERENCES
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,references}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
