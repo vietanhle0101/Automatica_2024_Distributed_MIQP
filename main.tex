@@ -234,7 +234,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-This is my note on the idea.
+In this paper, we.
 
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,7 +336,7 @@ where $\bbsym{A}_{i}^\top = [(\bbsym{A}_{i}^{j})^\top]_{j \in \NNN_i}$, $\bbsym{
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\tilde{\bbsym{x}}_i^{(t)} \in \XXX_i$ and an real-valued solution of the relaxed problem $\bar{\bbsym{x}}_i^{(t)} \in \bar{\XXX}_i$ where $\bar{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
 We define $\Delta (\bar{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\bar{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\tilde{\bbsym{x}}_i$.
-The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
+% The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
 The augmented Lagrangian for the problem is formulated as follows
 \begin{equation}
@@ -421,6 +421,7 @@ We consider the following Lyapunov function
 \end{multlined}
 \end{equation}
 where $\eta > 0$.
+The overall idea for the convergence proof is to prove the above Lyapunov function is not increasing over the iterations.
 
 \begin{lemma}
 For $t \ge 1$, we have
@@ -448,6 +449,8 @@ Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i}{\argmin} \;\norm{\bbs
 \end{proof}
 % \begin{theorem}
 % \end{theorem}
+
+\section{Numerical Studies}
 
 \begin{comment}
 \section{Optimization Algorithm}
