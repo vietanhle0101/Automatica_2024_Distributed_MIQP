@@ -214,16 +214,18 @@
 % papers but only if the title
 % is over 5 words. Running title
 % is not shown in output.
-\title{Distributed Optimization Algorithm for Mixed Integer Quadratic Programming} % Title, preferably not more
+\title{A Distributed Optimization Algorithm for Mixed Integer Quadratic Programming} % Title, preferably not more
 % than 10 words. \thanksref{footnoteinfo}
-% \thanks[footnoteinfo]{This research was supported in part by ARPAE's NEXTCAR program under the award number DE-AR0000796 and by the Delaware Energy Institute (DEI).}
+\thanks[footnoteinfo]{This research was supported partially by NSF under Grants CNS-2149520, CMMI-2219761, by Mathworks, and by Delaware Department of Transportation.}
 
-\author[Paestum]{Viet-Anh Le}\ead{vietale@udel.edu},  % (ead) as shown
-\author[Paestum]{Andreas A. Malikopoulos}\ead{andreas@udel.edu}
-\address[Paestum]{Department of Mechanical Engineering, University of Delaware, 126 Spencer Lab, 130 Academy Street, Newark, DE, 19716, USA}  % Please supply
-%\address[Rome]{Division of Systems Engineering and Center for Information and Systems Engineering, Boston University, 15 Saint Mary's Street,
-%Brookline, MA, 02446, USA}             % full addresses
-%\address[Baiae]{The White House, Baiae}        % here.
+\author[UD,SY]{Viet-Anh Le}\ead{vl299@cornell.edu},
+\author[CEE]{Andreas A. Malikopoulos}\ead{amaliko@cornell.edu}
+
+
+\address[UD]{Department of Mechanical Engineering, University of Delaware, Newark, DE 19716 USA}
+\address[SY]{Systems Engineering Field, Cornell University, Ithaca, NY 14850 USA}
+\address[CEE]{School of Civil and Environmental Engineering, Cornell University, Ithaca, NY 14853 USA}
+
 \begin{keyword}                           % Five to ten keywords,
 .
 \end{keyword}                             % keyword list or with the
@@ -234,7 +236,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-This is my note on the idea.
+In this paper, we.
 
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,7 +338,7 @@ where $\bbsym{A}_{i}^\top = [(\bbsym{A}_{i}^{j})^\top]_{j \in \NNN_i}$, $\bbsym{
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\tilde{\bbsym{x}}_i^{(t)} \in \XXX_i$ and an real-valued solution of the relaxed problem $\bar{\bbsym{x}}_i^{(t)} \in \bar{\XXX}_i$ where $\bar{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
 We define $\Delta (\bar{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\bar{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\tilde{\bbsym{x}}_i$.
-The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
+% The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
 The augmented Lagrangian for the problem is formulated as follows
 \begin{equation}
@@ -380,7 +382,7 @@ where $\alpha^{(t)} \in \RRplus$ is the step-size.
 
 \Note{In this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
 
-\textbf{Convergence Analysis}
+\subsection{Convergence Analysis}
 
 To prove convergence, we need: (1) identifying a so-called sufficiently decreasing Lyapunov function (usually the augmented Lagrangian); and
 (2) establishing the lower boundness property of the Lyapunov
@@ -438,7 +440,19 @@ For $t \ge 1$, we have
 \begin{proof}
 Sketch:
 
-From step 1 of the algorithm:
+From step 1 (primal update) and step 2 (dual update) of the algorithm, we have:
+\begin{equation}
+\begin{multlined}
+\Big( \norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
++ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
+- \Big(  \norm{\bbsym{x}^{(t+1)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
++ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t+1)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
+\ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}}^2
++ \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
++ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)})
++ \eta \norm{\xtil^{(k)}-\bbsym{x}^{(k)}}_2^2
+\end{multlined}
+\end{equation}
 
 Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$ (step 2 of the algorithm), we have
 \begin{equation}
