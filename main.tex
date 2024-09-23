@@ -301,54 +301,59 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 % \cite{burger2023gauss}: CIA applied to MINLP, not distributed. 
 
 \section{Problem Formulation}
-\begin{definition}
-Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
-For each \agent{i}, $i \in \VVV$, let $\NNN_i = \{j \in \VVV \;|\; (i,j) \in \EEE\}$ be the set of its neighbors.
-\end{definition}
 
-\begin{definition}
-Let $\bbsym{x}_i$ be, $f_i (\bbsym{x}_i)$ be the local objective function,
-where
+\subsection{Distributed Mixed-Integer Quadratic Programming}
+
+Let consider an optimization problem
+We focus on the following optimization problem
+\begin{equation}
+\begin{split}
+\underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
+\text{subject to} & \quad \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}_i = \bbsym{b}, \\
+\end{split}
+\end{equation}
+where $\XXX_i^{\rm{MI}}$ is the mixed-integer-valued set for $\bbsym{x}_i$,
 \[
-f_i (\bbsym{x}_i) = \bbsym{x}_i^\top \bbsym{Q}_i \bbsym{x}_i + \bbsym{q}_i^\top \bbsym{x}_i.
+f_i (\bbsym{x}_i) = \bbsym{x}_i^\top \bbsym{Q}_i \bbsym{x}_i + \bbsym{q}_i^\top \bbsym{x}_i,
 \]
-We represent the coupling constraint between \agent{i} and \agent{j} in the following form
-\[
-\bbsym{A}^{j}_{i} \bbsym{x}_i + \bbsym{A}^{i}_{j} \bbsym{x}_j \le \bbsym{b}_{ij},
-\]
-\end{definition}
+is the local objective function of each \agent{i},
+$\bbsym{Q}_i$, $\bbsym{q}_i$, $\bbsym{A}_{i}$, and $\bbsym{b}$ are the matrices and vectors of coefficients.
+Let $\bbsym{x}^\top = [\bbsym{x}_1^\top, \dots, \bbsym{x}_N^\top]$ be the concatenated vector of optimization variables.
+
+% \begin{definition}
+% Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
+% For each \agent{i}, $i \in \VVV$, let $\NNN_i = \{j \in \VVV \;|\; (i,j) \in \EEE\}$ be the set of its neighbors.
+% \end{definition}
+
+% \begin{definition}
+% Let $\bbsym{x}_i$ be, $f_i (\bbsym{x}_i)$ be the local objective function,
+% where
+
+% We represent the coupling constraint between \agent{i} and \agent{j} in the following form
+% \[
+% \bbsym{A}^{j}_{i} \bbsym{x}_i + \bbsym{A}^{i}_{j} \bbsym{x}_j \le \bbsym{b}_{ij},
+% \]
+% \end{definition}
+
+\subsection{Extensions}
+
+Discuss about some extensions of the formulation, \eg inequality constriants, decentralized setup, pairwise coupling constraints. 
 
 \section{Distributed Mixed-Integer Optimization with Proximal ADMM with Sequential Convex Programming}
 
-First, we introduce an auxiliary variable $\bbsym{y}_{i}^{j}$ for \agent{i} involved in coupling constraint with \agent{j} and formulate the following equivalent problem,
-\begin{equation}
-\begin{split}
-\underset{\bbsym{x}_i \in \XXX_i}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
-\text{subject to} & \quad \bbsym{A}^{j}_{i} \bbsym{x}_i \le \bbsym{y}_{i}^{j}, \, \forall j \in \NNN_i, \\
-& \quad \bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} = \bbsym{b}_{ij},\, \forall (i,j) \in \EEE.
-\end{split}
-\end{equation}
-where.
-We represent the local constraints in the following compact form, 
-\begin{equation}
-\bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i},
-\end{equation}
-where $\bbsym{A}_{i}^\top = [(\bbsym{A}_{i}^{j})^\top]_{j \in \NNN_i}$, $\bbsym{y}_{i}^\top = [(\bbsym{y}_{i}^{j})^\top]_{j \in \NNN_i}$
-
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
-At each iteration $t$, we keep a mixed-integer-valued vector $\tilde{\bbsym{x}}_i^{(t)} \in \XXX_i$ and an real-valued solution of the relaxed problem $\bar{\bbsym{x}}_i^{(t)} \in \bar{\XXX}_i$ where $\bar{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
-We define $\Delta (\bar{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\bar{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\tilde{\bbsym{x}}_i$.
+At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and an real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$ where $\tilde{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
+We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
 % The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
 The augmented Lagrangian for the problem is formulated as follows
 \begin{equation}
 \begin{multlined}
-\LLL ( \{ \bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i} \}_{i\in \VVV}) = \sum_{i \in \VVV} \Big[ f_i (\bbsym{x}_i) + \II (\bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i}) \\
-+ \sum_{j \in \NNN_i} (\bbsym{\lambda}_{i}^j)^\top (\bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} - \bbsym{b}_{ij}) \Big] 
-+ \frac{\rho}{2} \sum_{(i,j) \in \EEE} \norm{\bbsym{y}_{i}^{j} + \bbsym{y}_{j}^{i} - \bbsym{b}_{ij}}_2^2
+\LLL (\bbsym{x}, \bbsym{\lambda}) = \sum_{i=1}^{N} f_i ( \bbsym{x}_i) + \bbsym{\lambda}^\top \bigg(\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b} \bigg) \\
++ \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2
 \end{multlined}
 \end{equation}
-where $\bbsym{\lambda}_{i}^j$ are the dual variables (Lagrangian multipliers), $\bbsym{\lambda}_{i}^\top = [(\bbsym{\lambda}_{i}^j)^\top]_{j \in \NNN_i}$ and $\rho$ is a positive constant.
+where $\bbsym{\lambda}$ are the dual variables (Lagrangian multipliers), and $\rho$ is a positive constant.
 
 The algorithm consists of the following steps
 \begin{itemize}
@@ -356,29 +361,25 @@ The algorithm consists of the following steps
 % \begin{figure*}
 \begin{equation}
 \label{eq:local_update}
-\begin{split}
-\bar{\bbsym{x}}_i^{(t+1)}, {\bbsym{y}}_i^{(t+1)} =\; & \underset{\bbsym{x}_i \in \bar{\XXX}_i, \bbsym{y}_i}{\argmin}  \; \LLL_i (\bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i}^{(t)}) \\
-& + \beta^{(t)} \Big( \norm{\bbsym{x}_i - \tilde{\bbsym{x}}_i^{(t)}}_2^2 + \norm{\bbsym{y}_i - \bbsym{y}_i^{(t)}}_2^2 \Big) , \\
-& \text{subject to} \; \bbsym{A}_{i} \bbsym{x}_i \le \bbsym{y}_{i},
-\end{split}
+\bbsym{x}_i^{(t+1)} = \; \underset{\bbsym{x}_i \in \tilde{\XXX}_i}{\argmin}  \; \LLL (\bbsym{x}_i, \tilde{\bbsym{x}}_{-i}^{(t)}, \bbsym{\lambda}^{(t)}) + \beta \norm{\bbsym{x}_i - \tilde{\bbsym{x}}_i^{(t)}}_2^2,
 \end{equation}
-where $\beta^{(t)} \in \RRplus$ is a penalty weight and 
-\begin{equation}
-\LLL_i (\bbsym{x}_i, \bbsym{y}_i, \bbsym{\lambda}_{i}) =    
-\end{equation}
+where $\beta \in \RRplus$ is a penalty weight.
 % \end{figure*}
 
-\item \Agent{i} transmits ${\bbsym{y}}_i^{j,(t+1)}$ to \agent{j}.
-\item Update the dual variables $\bbsym{\lambda}_{i}$ by 
+\item Update the dual variables $\bbsym{\lambda}$ by 
 \begin{equation}
-\bbsym{\lambda}_{i}^{j,(t+1)} = \bbsym{\lambda}_{i}^{j,(t)} + \gamma \rho \big( \bbsym{y}_{i}^{j,(t+1)} + \bbsym{y}_{j}^{i,(t+1)} - \bbsym{b}_{ij} \big).
+\bbsym{\lambda}^{(t+1)} = \bbsym{\lambda}^{(t)} + \gamma \rho \bigg( \sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b} \bigg).
 \end{equation}
 where $\alpha^{(t)} \in \RRplus$ is the step-size.
-\item \Agent{i} transmits $\bbsym{\lambda}_i^{j,(t+1)}$ to \agent{j}.
-\item Compute $\tilde{\bbsym{x}}_i^{(t+1)}$ from $\bbsym{x}_i^{(t+1)}$ by rounding operator (transform a real-valued solution into an integer one).
-\end{itemize}
 
-\Note{If $\bbsym{\lambda}_i^{j,(t+1)} = \bbsym{\lambda}_j^{i,(t+1)}$, then we do not need the commucation for the dual variables.}
+
+\item Compute $\tilde{\bbsym{x}}_i^{(t+1)}$ from $\bbsym{x}_i^{(t+1)}$ by rounding operator (transform a real-valued solution into an integer one). 
+In other words,
+\begin{equation}
+\tilde{\bbsym{x}}_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;
+\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2,
+\end{equation}
+\end{itemize}
 
 \Note{In this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
 
