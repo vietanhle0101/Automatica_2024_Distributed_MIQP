@@ -179,6 +179,14 @@
 % \newtheorem{remark}{Remark}
 % \newtheorem{problem}{Problem}
 
+% Choose the style you want
+% \newcounter{remark}
+% \newenvironment{remark}{%
+% \par\vspace{3pt}\noindent\refstepcounter{remark}\textbf{Remark~\theremark:}}%
+% {\par\endtrivlist\unskip}
+% Or use the standard one
+\newtheorem{remark}{Remark}
+
 \theoremstyle{plain}
 \newtheorem{proposition}{Proposition}
 \newtheorem{struct_result}{Structural Result}
@@ -248,9 +256,9 @@ In this paper, we propose an efficient algorithm to solve mixed-integer quadrati
 
 \section{Introduction}
 
-\cite{le2024distributed}
-
 \subsection{Motivation}
+
+Many networked control systems \cite{le2024distributed}.
 
 \subsection{Literature Review on Mixed-Integer Optimization}
 
@@ -306,10 +314,12 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 
 \section{Problem Formulation}
 
+\Note{May have a section about all the notations.}
+
 \subsection{Distributed Mixed-Integer Quadratic Programming}
 
-Let consider an optimization problem involving $N$ agents.
-We focus on the following optimization problem
+Let consider an optimization problem involving $N$ agents with separable objectives and coupling constraints.
+The optimization problem is given by
 \begin{equation}
 \begin{split}
 \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
@@ -338,6 +348,10 @@ where $\partial f_i(\bbsym{x}_i)$ denotes subdifferential of $f_i$ at $\bbsym{x}
 \end{assumption}
 
   
+\begin{remark}
+Although the problem formulation does not explicitly account for (linear) local constraints, they can be incorporated into the local set $\XXX_i^{\rm{MI}}$. 
+\end{remark}
+
 % \begin{definition}
 % Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
 % For each \agent{i}, $i \in \VVV$, let $\NNN_i = \{j \in \VVV \;|\; (i,j) \in \EEE\}$ be the set of its neighbors.
@@ -353,11 +367,11 @@ where $\partial f_i(\bbsym{x}_i)$ denotes subdifferential of $f_i$ at $\bbsym{x}
 % \]
 % \end{definition}
 
-\subsection{Extensions}
-
-Discuss about some extensions of the formulation, \eg inequality constriants, decentralized setup, pairwise coupling constraints. 
+Discuss about how the formulation covers some other extensions, \eg with inequality constriants, decentralized setup, pairwise coupling constraints. 
 
 \section{Distributed Mixed-Integer Optimization with Proximal ADMM with Sequential Convex Programming}
+
+\subsection{Algorithm}
 
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and an real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$ where $\tilde{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
@@ -371,7 +385,7 @@ The augmented Lagrangian for the problem is formulated as follows
 + \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2
 \end{multlined}
 \end{equation}
-where $\bbsym{\lambda}$ are the dual variables (Lagrangian multipliers), and $\rho$ is a positive constant.
+where $\bbsym{\lambda}$ are the dual variables (Lagrangian multipliers), and $\rho > 0$ is a positive constant.
 
 The algorithm consists of the following steps
 \begin{itemize}
@@ -414,15 +428,15 @@ Some papers about feasibility pump in mixed-integer optimization: \cite{boland20
 
 \cite[Section V]{deng2017parallel} discussed the connection between the Proximal Jacobian ADMM Algorithm and the proximal point algorithm.
 
-\Note{In what follows, I just summarize the proof in \cite{deng2017parallel} for original Jacobi-Proximal ADMM.}
+% \Note{In what follows, I just summarize the proof in \cite{deng2017parallel} for original Jacobi-Proximal ADMM.}
 
 To simplify the notation, we let
 \begin{equation}
 \bbsym{P} = 
 \begin{pmatrix}
-\bbsym{P}_{1} + \rho \bbsym{A}_i^\top \bbsym{A}_i \\
+\beta \II + \rho \bbsym{A}_i^\top \bbsym{A}_i \\
 & \ddots \\
-& & \bbsym{P}_N + \rho \bbsym{A}_N^\top \bbsym{A}_N
+& & \beta \II + \rho \bbsym{A}_N^\top \bbsym{A}_N
 \end{pmatrix}
 \end{equation}
 
@@ -438,8 +452,27 @@ We consider the following Lyapunov function
 \end{equation}
 where $\eta > 0$.
 The overall idea for the convergence proof is to prove the above Lyapunov function is not increasing over the iterations.
-It is obvious that $\Phi^{(t)}$ is bounded below by $0$.
-In what follows, we prove that $\Phi^{(t)}$
+It is obvious that $\Phi^{(t)}$ is lowerly bounded by $0$.
+In what follows, we prove the sufficient decrease of $\Phi^{(t)}$.
+
+\begin{lemma}
+\label{lem:first-ineq}
+For $t \ge 1$, we have
+\begin{equation}
+\label{eq:lem1a}
+\begin{multlined}
+\Big( \norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
++ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
+- \Big(\norm{\bbsym{x}^{(t+1)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
++ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t+1)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
+\ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}}^2
++ \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
++ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)}).
+\end{multlined}
+\end{equation}
+\end{lemma}
+
+The proof of Lemma~\ref{lem:first-ineq} is similar to Lemma 2.1 in \cite{deng2017parallel} and is given in Appendix.
 
 \begin{lemma}
 For $t \ge 1$, we have
@@ -461,30 +494,16 @@ As a result, if the matrix
 \frac{1}{\rho} \bbsym{A} & \quad \frac{2-\gamma}{\rho \gamma^2} \II \\
 \end{pmatrix}
 \end{equation}
-is positive definite, $\{\Phi^{(t)}\}$ is a monotonically non-increasing sequence.
+is positive definite, there exists $\xi > 0$ such that 
+\begin{equation}
+\norm{\bbsym{z}^{(t)} - \bbsym{z}^{(t+1)}}_{\bbsym{R} - \eta \II}^2 \ge \xi  \norm{\bbsym{z}^{(t)} - \bbsym{z}^{(t+1)}}_2^2
+\end{equation}
+where $\bbsym{z}^\top = [\bbsym{x}^\top, \bbsym{\lambda}^\top]$.
+Then $\{\Phi^{(t)}\}$ sufficiently decrease.
 \end{lemma}
 
 \begin{proof}
-Sketch:
-
-First, we prove the following inequality which is similar to Lemma 2.1 in \cite{deng2017parallel}.
-\begin{equation}
-\label{eq:lem1a}
-\begin{multlined}
-\Big( \norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
-+ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
-- \Big(\norm{\bbsym{x}^{(t+1)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
-+ \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t+1)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
-\ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}}^2
-+ \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
-+ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)})
-\end{multlined}
-\end{equation}
-
-From the primal update and dual update of the algorithm, we have:
-
-
-Thus, 
+From Lemma~\ref{lem:first-ineq}, we obtain
 \begin{equation}
 \label{eq:lem1b}
 \begin{multlined}
@@ -508,10 +527,12 @@ Therefore, from \eqref{eq:lem1b} and \eqref{eq:lem1c}, we obtain \eqref{eq:fcn_d
 
 \begin{theorem}
 If the parameters $\rho$, $\gamma$, and $\beta$ are chosen such that 
-then the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converge to $\{\bbsym{x}^{*} , \bbsym{\lambda}^{*} \}$
+then the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converge to $\{\bbsym{x}^{*} , \bbsym{\lambda}^{*} \}$.
 \end{theorem}
 
 \section{Numerical Studies}
+
+We illustrate the proposed algorithm by the example presented in \cite{le2024distributed}.
 
 \section{Conclusions}
 
