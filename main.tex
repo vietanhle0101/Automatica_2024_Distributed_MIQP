@@ -248,6 +248,10 @@ In this paper, we propose an efficient algorithm to solve mixed-integer quadrati
 
 \section{Introduction}
 
+\cite{le2024distributed}
+
+\subsection{Motivation}
+
 \subsection{Literature Review on Mixed-Integer Optimization}
 
 Review on mixed-integer optimization: \cite[Sec. 5.2]{ioan2021mixed}.
@@ -304,7 +308,7 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 
 \subsection{Distributed Mixed-Integer Quadratic Programming}
 
-Let consider an optimization problem
+Let consider an optimization problem involving $N$ agents.
 We focus on the following optimization problem
 \begin{equation}
 \begin{split}
@@ -318,8 +322,22 @@ f_i (\bbsym{x}_i) = \bbsym{x}_i^\top \bbsym{Q}_i \bbsym{x}_i + \bbsym{q}_i^\top 
 \]
 is the local objective function of each \agent{i},
 $\bbsym{Q}_i$, $\bbsym{q}_i$, $\bbsym{A}_{i}$, and $\bbsym{b}$ are the matrices and vectors of coefficients.
-Let $\bbsym{x}^\top = [\bbsym{x}_1^\top, \dots, \bbsym{x}_N^\top]$ be the concatenated vector of optimization variables.
+Let $\bbsym{x}^\top = [\bbsym{x}_1^\top, \dots, \bbsym{x}_N^\top]$ be the concatenated vector of optimization variables, and let
+$\bbsym{A} = \big[ \bbsym{A}_1, \dots, \bbsym{A}_N \big]$.
 
+
+\begin{assumption}
+There exists a saddle point $(\bbsym{x}^{*}, \bbsym{\lambda}^{*})$, \ie it satisfies the KKT conditions
+\begin{equation}
+\begin{split}
+& \bbsym{A}_i^\top \bbsym{\lambda}^{*} \in \partial f_i(\bbsym{x}_i^{*}),\; \forall i = 1, \dots, N, \\
+& \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}^{*}_i = \bbsym{b}
+\end{split}
+\end{equation}
+where $\partial f_i(\bbsym{x}_i)$ denotes subdifferential of $f_i$ at $\bbsym{x}_i$.
+\end{assumption}
+
+  
 % \begin{definition}
 % Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
 % For each \agent{i}, $i \in \VVV$, let $\NNN_i = \{j \in \VVV \;|\; (i,j) \in \EEE\}$ be the set of its neighbors.
@@ -380,14 +398,13 @@ In other words,
 \end{equation}
 \end{itemize}
 
-\Note{In this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
+\Note{Emphasize that in this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
 
 \subsection{Convergence Analysis}
 
 To prove convergence, we need: (1) identifying a so-called sufficiently decreasing Lyapunov function (usually the augmented Lagrangian); and
 (2) establishing the lower boundness property of the Lyapunov
 function \cite{yang2022proximal}.
-Note that since the objective function is a quadratic function, the latter condition is already satisfied.
 
 Dinh \etal \cite{dinh2013dual} proposed sequential convex programming (SCP) scheme based on penalty function approach to handle nonconvexity.
 \cite{yang2022proximal} shows the convergence of proximal ADMM for nonconvex and nonsmooth optimization.
@@ -398,10 +415,6 @@ Some papers about feasibility pump in mixed-integer optimization: \cite{boland20
 \cite[Section V]{deng2017parallel} discussed the connection between the Proximal Jacobian ADMM Algorithm and the proximal point algorithm.
 
 \Note{In what follows, I just summarize the proof in \cite{deng2017parallel} for original Jacobi-Proximal ADMM.}
-
-\begin{assumption}
-There exists a saddle point $(\bbsym{x}^{*}, \bbsym{\lambda}^{*})$
-\end{assumption}
 
 To simplify the notation, we let
 \begin{equation}
@@ -425,6 +438,8 @@ We consider the following Lyapunov function
 \end{equation}
 where $\eta > 0$.
 The overall idea for the convergence proof is to prove the above Lyapunov function is not increasing over the iterations.
+It is obvious that $\Phi^{(t)}$ is bounded below by $0$.
+In what follows, we prove that $\Phi^{(t)}$
 
 \begin{lemma}
 For $t \ge 1$, we have
@@ -446,7 +461,7 @@ As a result, if the matrix
 \frac{1}{\rho} \bbsym{A} & \quad \frac{2-\gamma}{\rho \gamma^2} \II \\
 \end{pmatrix}
 \end{equation}
-is positive definite, $\{\Phi^{(t)}\}$ is non-increasing.
+is positive definite, $\{\Phi^{(t)}\}$ is a monotonically non-increasing sequence.
 \end{lemma}
 
 \begin{proof}
@@ -490,10 +505,16 @@ Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;
 
 Therefore, from \eqref{eq:lem1b} and \eqref{eq:lem1c}, we obtain \eqref{eq:fcn_decrease}.
 \end{proof}
-% \begin{theorem}
-% \end{theorem}
+
+\begin{theorem}
+If the parameters $\rho$, $\gamma$, and $\beta$ are chosen such that 
+then the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converge to $\{\bbsym{x}^{*} , \bbsym{\lambda}^{*} \}$
+\end{theorem}
 
 \section{Numerical Studies}
+
+\section{Conclusions}
+
 
 \begin{comment}
 \section{Optimization Algorithm}
@@ -681,7 +702,7 @@ p(M \,|\, \III(k+1)) = \frac{\NNN( \Phi^M(x(k),u(k)) \mu_{\gamma,k}^M , \Sigma^M
 %%%%  REFERENCES
 
 \bibliographystyle{IEEEtran}
-\bibliography{IEEEabrv,references}
+\bibliography{IEEEabrv,references,refs_IDS}
 
 \end{document}
 
