@@ -312,6 +312,8 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 
 % \cite{burger2023gauss}: CIA applied to MINLP, not distributed. 
 
+\subsection{Our contributions}
+
 \section{Problem Formulation}
 
 \subsection{Notations}
@@ -377,14 +379,14 @@ Discuss about how the formulation covers some other extensions, \eg with inequal
 
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and an real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$ where $\tilde{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
-We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
+% We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
 % The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
 The augmented Lagrangian for the problem is formulated as follows
 \begin{equation}
 \begin{multlined}
 \LLL (\bbsym{x}, \bbsym{\lambda}) = \sum_{i=1}^{N} f_i ( \bbsym{x}_i) + \bbsym{\lambda}^\top \bigg(\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b} \bigg) \\
-+ \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2
++ \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2,
 \end{multlined}
 \end{equation}
 where $\bbsym{\lambda}$ are the dual variables (Lagrangian multipliers), and $\rho > 0$ is a positive constant.
@@ -511,7 +513,7 @@ From Lemma~\ref{lem:first-ineq}, we obtain
 \end{multlined}
 \end{equation}
 
-Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$ and $\xtil^{(t)} \in \XXX_i^{\rm{MI}}$, we have
+Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$ and $\xtil_i^{(t)} \in \XXX_i^{\rm{MI}}$, we have
 \begin{equation}
 \norm{\xtil_i^{(t+1)} - \bbsym{x}_i^{(t+1)}}_2^2 
 \le \norm{\xtil_i^{(t)} - \bbsym{x}_i^{(t+1)}}_2^2 
@@ -546,14 +548,14 @@ Note that
 \bbsym{z}^\top \bbsym{R} \bbsym{z} = 
 \bbsym{x}^\top \big(\bbsym{P} - \eta \II \big) \bbsym{x} 
 + \frac{2-\gamma}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda} 
-+ \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A} \bbsym{x},
++ \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A} \bbsym{x}.
 \end{equation}
 Since 
 \begin{equation}
 \begin{split}
 \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A} \bbsym{x} 
 &= \sum_{i=1}^N \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A}_i \bbsym{x}_i \\
-& \ge - \sum_{i=1}^N \Big( \frac{\epsilon}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda} 
+& \ge - \! \sum_{i=1}^N \! \Big( \frac{\epsilon}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda} 
 + \frac{\rho}{\epsilon} (\bbsym{A}_i \bbsym{x}_i)^\top (\bbsym{A}_i \bbsym{x}_i) \Big),
 \end{split}
 \end{equation}
@@ -566,7 +568,7 @@ we have
 \end{multlined}
 \end{equation}
 
-The conditions \eqref{eq:conditions} ensure that $\frac{2 - \gamma - N \epsilon}{\rho \gamma^2} > 0$ and $\beta_i \II + \rho \bbsym{A}_i^\top \bbsym{A}_i - \eta \II - \frac{\rho}{\epsilon} \bbsym{A}_i^\top \bbsym{A}_i$ is positive definite, which yields $\bbsym{z}^\top \bbsym{R} \bbsym{z} > 0$ for any $\bbsym{z}$, or $\bbsym{R}$ is positive definite.
+The conditions \eqref{eq:conditions} ensure that $\frac{2 - \gamma - N \epsilon}{\rho \gamma^2} > 0$ and $\beta_i \II + \rho \bbsym{A}_i^\top \bbsym{A}_i - \eta \II - \frac{\rho}{\epsilon} \bbsym{A}_i^\top \bbsym{A}_i$ is positive definite, which yields $\bbsym{z}^\top \bbsym{R} \bbsym{z} > 0$ for any $\bbsym{z} \in \RR^{n+m}, \bbsym{z}\neq \bbsym{0}$, or $\bbsym{R}$ is positive definite.
 From Lemma~\ref{lem:suff-decrease}, $\{\Phi^{(t)}\}$ achieves sufficient decrease.
 Thus, $\{\Phi^{(t)}\}$ converges to $0$ and from \eqref{eq:Lya-fcn}, $\norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}} \rightarrow 0$, $\norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}} \rightarrow 0$, and $\norm{\xtil^{(t)} - \bbsym{x}^{(t)}} \rightarrow 0$. The proof is complete.
 \end{proof}
