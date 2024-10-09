@@ -312,7 +312,11 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 
 % \cite{burger2023gauss}: CIA applied to MINLP, not distributed. 
 
+\subsection{Our contributions}
+
 \section{Problem Formulation}
+
+\subsection{Notations}
 
 \Note{May have a section about all the notations.}
 
@@ -378,21 +382,21 @@ Discuss about how the formulation covers some other extensions, \eg with inequal
 
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and an real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$ where $\tilde{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
-We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
+% We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
 % The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
 The augmented Lagrangian for the problem is formulated as follows
 \begin{equation}
 \begin{multlined}
 \LLL (\bbsym{x}, \bbsym{\lambda}) = \sum_{i=1}^{N} f_i ( \bbsym{x}_i) + \bbsym{\lambda}^\top \bigg(\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b} \bigg) \\
-+ \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2
++ \frac{\rho}{2} \norm{\sum_{i=1}^{N} \bbsym{A}_{i} \bbsym{x}_i - \bbsym{b}}_2^2,
 \end{multlined}
 \end{equation}
 where $\bbsym{\lambda}$ are the dual variables (Lagrangian multipliers), and $\rho > 0$ is a positive constant.
 
 The algorithm consists of the following steps
 \begin{itemize}
-\item \Agent{i} solve the local problem \eqref{eq:local_update}.
+\item \Agent{i} solves the local problem \eqref{eq:local_update}.
 % \begin{figure*}
 \begin{equation}
 \label{eq:local_update}
@@ -430,9 +434,7 @@ In other words,
 
 \subsection{Convergence Analysis}
 
-To prove convergence, we need: (1) identifying a so-called sufficiently decreasing Lyapunov function (usually the augmented Lagrangian); and
-(2) establishing the lower boundness property of the Lyapunov
-function \cite{yang2022proximal}.
+To prove convergence, we need to (1) identify a so-called sufficiently decreasing Lyapunov function (usually the augmented Lagrangian); and (2) establish the lower boundness property of the Lyapunov function \cite{yang2022proximal}.
 
 Dinh \etal \cite{dinh2013dual} proposed sequential convex programming (SCP) scheme based on penalty function approach to handle nonconvexity.
 \cite{yang2022proximal} shows the convergence of proximal ADMM for nonconvex and nonsmooth optimization.
@@ -458,6 +460,7 @@ To simplify the notation, we let
 % and $\Delta \bbsym{x}^{(t)} = (\bbsym{x}^{(t)}-\bbsym{x}^{*})$,
 We consider the following Lyapunov function
 \begin{equation}
+\label{eq:Lya-fcn}
 \begin{multlined}
 \Phi^{(t)} = \norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}}^2_{\bbsym{P}}
 + \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}}_2^2 \\
@@ -466,8 +469,7 @@ We consider the following Lyapunov function
 \end{equation}
 where $\eta > 0$.
 The overall idea for the convergence proof is to prove the above Lyapunov function is not increasing over the iterations.
-It is obvious that $\Phi^{(t)}$ is lowerly bounded by $0$.
-In what follows, we prove the sufficient decrease of $\Phi^{(t)}$.
+Thus, in what follows, we prove the sufficient decrease of $\Phi^{(t)}$.
 
 \begin{lemma}
 \label{lem:first-ineq}
@@ -489,6 +491,7 @@ For $t \ge 1$, we have
 The proof of Lemma~\ref{lem:first-ineq} is similar to Lemma 2.1 in \cite{deng2017parallel} and is given in Appendix.
 
 \begin{lemma}
+\label{lem:suff-decrease}
 For $t \ge 1$, we have
 \begin{equation}
 \label{eq:fcn_decrease}
@@ -508,12 +511,7 @@ As a result, if the matrix
 \frac{1}{\rho} \bbsym{A} & \quad \frac{2-\gamma}{\rho \gamma^2} \II_m \\
 \end{pmatrix}
 \end{equation}
-is positive definite, there exists $\xi > 0$ such that 
-\begin{equation}
-\norm{\bbsym{z}^{(t)} - \bbsym{z}^{(t+1)}}_{\bbsym{R} - \eta \II}^2 \ge \xi  \norm{\bbsym{z}^{(t)} - \bbsym{z}^{(t+1)}}_2^2
-\end{equation}
-where $\bbsym{z}^\top = [\bbsym{x}^\top, \bbsym{\lambda}^\top]$.
-Then $\{\Phi^{(t)}\}$ sufficiently decrease.
+is positive definite, then $\{\Phi^{(t)}\}$ sufficiently decrease.
 \end{lemma}
 
 \begin{proof}
@@ -529,7 +527,12 @@ From Lemma~\ref{lem:first-ineq}, we obtain
 \end{multlined}
 \end{equation}
 
-Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$, we have
+Since $\xtil_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;\norm{\bbsym{x}_i - \bbsym{x}_i^{(t+1)}}_2^2$ and $\xtil_i^{(t)} \in \XXX_i^{\rm{MI}}$, we have
+\begin{equation}
+\norm{\xtil_i^{(t+1)} - \bbsym{x}_i^{(t+1)}}_2^2 
+\le \norm{\xtil_i^{(t)} - \bbsym{x}_i^{(t+1)}}_2^2 
+\end{equation}
+which leads to
 \begin{equation}
 \label{eq:lem1c}
 \norm{\xtil^{(t+1)} - \bbsym{x}^{(t+1)}}_2^2 
@@ -540,9 +543,49 @@ Therefore, from \eqref{eq:lem1b} and \eqref{eq:lem1c}, we obtain \eqref{eq:fcn_d
 \end{proof}
 
 \begin{theorem}
-If the parameters $\rho$, $\gamma$, and $\beta$ are chosen such that 
+If the parameters $\rho$, $\gamma$, and $\beta$ are chosen such that the following conditions are satisfied
+\begin{equation}
+\label{eq:conditions}
+\begin{split}
+& \beta_i > \eta + \rho\, (1/\epsilon-1)\, e_i, \\
+& 2-\gamma > N \epsilon,
+\end{split}
+\end{equation}
+where $e_i$ is the maximum eigenvalue of $\bbsym{A}_i^\top \bbsym{A}_i$, $\epsilon > 0$ is a positive constant,
 then the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converge to $\{\bbsym{x}^{*} , \bbsym{\lambda}^{*} \}$.
 \end{theorem}
+
+\begin{proof}
+First, we prove that under the conditions \eqref{eq:conditions}, $\bbsym{R}$ is a positive definite matrix.
+Note that 
+\begin{equation}
+\bbsym{z}^\top \bbsym{R} \bbsym{z} = 
+\bbsym{x}^\top \big(\bbsym{P} - \eta \II \big) \bbsym{x} 
++ \frac{2-\gamma}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda} 
++ \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A} \bbsym{x}.
+\end{equation}
+Since 
+\begin{equation}
+\begin{split}
+\frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A} \bbsym{x} 
+&= \sum_{i=1}^N \frac{2}{\gamma} \bbsym{\lambda}^\top \bbsym{A}_i \bbsym{x}_i \\
+& \ge - \! \sum_{i=1}^N \! \Big( \frac{\epsilon}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda} 
++ \frac{\rho}{\epsilon} (\bbsym{A}_i \bbsym{x}_i)^\top (\bbsym{A}_i \bbsym{x}_i) \Big),
+\end{split}
+\end{equation}
+we have 
+\begin{equation}
+\begin{multlined}
+\bbsym{z}^\top \bbsym{R} \bbsym{z}
+\ge \sum_{i=1}^N \bbsym{x}^\top (\beta_i \II + \rho \bbsym{A}_i^\top \bbsym{A}_i - \eta \II - \frac{\rho}{\epsilon} \bbsym{A}_i^\top \bbsym{A}_i) \bbsym{x} \\
++ \frac{2 - \gamma - N \epsilon}{\rho \gamma^2} \bbsym{\lambda}^\top \bbsym{\lambda},
+\end{multlined}
+\end{equation}
+
+The conditions \eqref{eq:conditions} ensure that $\frac{2 - \gamma - N \epsilon}{\rho \gamma^2} > 0$ and $\beta_i \II + \rho \bbsym{A}_i^\top \bbsym{A}_i - \eta \II - \frac{\rho}{\epsilon} \bbsym{A}_i^\top \bbsym{A}_i$ is positive definite, which yields $\bbsym{z}^\top \bbsym{R} \bbsym{z} > 0$ for any $\bbsym{z} \in \RR^{n+m}, \bbsym{z}\neq \bbsym{0}$, or $\bbsym{R}$ is positive definite.
+From Lemma~\ref{lem:suff-decrease}, $\{\Phi^{(t)}\}$ achieves sufficient decrease.
+Thus, $\{\Phi^{(t)}\}$ converges to $0$ and from \eqref{eq:Lya-fcn}, $\norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}} \rightarrow 0$, $\norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}} \rightarrow 0$, and $\norm{\xtil^{(t)} - \bbsym{x}^{(t)}} \rightarrow 0$. The proof is complete.
+\end{proof}
 
 \section{Numerical Studies}
 
