@@ -325,6 +325,7 @@ Throughout the paper, we will utilize the following notations.
 \subsection{Distributed Mixed-Integer Quadratic Programming}
 
 Let consider an optimization problem involving $N$ agents with separable objectives and coupling constraints.
+Let $\bbsym{x}_i$ with a dimension of $n_i$ be the vector of local optimization variables of \agent{i}.
 The optimization problem is given by
 \begin{equation}
 \label{eq:miopt-prb}
@@ -333,15 +334,20 @@ The optimization problem is given by
 \text{subject to} & \quad \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}_i = \bbsym{b}, \\
 \end{split}
 \end{equation}
-where $\XXX_i^{\rm{MI}}$ is the mixed-integer-valued set for $\bbsym{x}_i$,
+where $\XXX_i^{\rm{MI}} \subset R^{n_i}$ is the mixed-integer-valued set for $\bbsym{x}_i$,
 \[
 f_i (\bbsym{x}_i) = \bbsym{x}_i^\top \bbsym{Q}_i \bbsym{x}_i + \bbsym{q}_i^\top \bbsym{x}_i,
 \]
 is the local objective function of each \agent{i},
-$\bbsym{Q}_i$, $\bbsym{q}_i$, $\bbsym{A}_{i}$, and $\bbsym{b}$ are the matrices and vectors of coefficients.
+${\bbsym{Q}_i \in \RR^{n_i \times n_i}}$, $\bbsym{q}_i \in \RR^{n_i}$, $\bbsym{A}_{i} \in \RR^{m \times n_i}$, and $\bbsym{b} \in \RR^{m}$ are the matrices and vectors of coefficients, with $m$ is the number of coupling constraints.
 Let $\bbsym{x}^\top = [\bbsym{x}_1^\top, \dots, \bbsym{x}_N^\top]$ be the concatenated vector of optimization variables, and let
 $\bbsym{A} = \big[ \bbsym{A}_1, \dots, \bbsym{A}_N \big]$.
+<<<<<<< HEAD
 We consider that $\bbsym{Q}_i$ is positive definite so that $f_i$ is a convex quadratic function.
+=======
+Thus, the coupling constraint can be also represented by
+${\bbsym{A} \bbsym{x} = \bbsym{b}}$.
+>>>>>>> 05737c3fe5e66c79ee28b21a95d5d4ed519b6bbf
 
 \begin{remark}
 Although the problem formulation does not explicitly account for (linear) local constraints, they can be incorporated into the local set $\XXX_i^{\rm{MI}}$. 
@@ -389,7 +395,7 @@ Discuss about how the formulation covers some other extensions, \eg with inequal
 
 \section{Distributed Mixed-Integer Optimization with Proximal ADMM and Sequential Convex Programming}
 
-\subsection{Algorithm}
+\subsection{Algorithm Design}
 
 To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal,deng2017parallel} with sequential convexification of the integrality constraints as presented follows.
 At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and a real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$.
@@ -411,9 +417,16 @@ The algorithm consists of the following steps
 % \begin{figure*}
 \begin{equation}
 \label{eq:local_update}
-\bbsym{x}_i^{(t+1)} = \; \underset{\bbsym{x}_i \in \tilde{\XXX}_i}{\argmin}  \; \LLL (\bbsym{x}_i, \tilde{\bbsym{x}}_{-i}^{(t)}, \bbsym{\lambda}^{(t)}) + \beta_i \norm{\bbsym{x}_i - \tilde{\bbsym{x}}_i^{(t)}}_2^2,
+\bbsym{x}_i^{(t+1)} = \; \underset{\bbsym{x}_i \in \tilde{\XXX}_i}{\argmin}  \; \LLL_i (\bbsym{x}_i, \bbsym{x}_{-i}^{(t)}, \bbsym{\lambda}^{(t)}) + \beta \norm{\bbsym{x}_i - \tilde{\bbsym{x}}_i^{(t)}}_2^2,
 \end{equation}
-where $\beta_i \in \RRplus$ is a penalty weight.
+where 
+\begin{equation}
+\begin{multlined}
+\LLL_i (\bbsym{x}_i, \bbsym{x}_{-i}^{(t)}, \bbsym{\lambda}^{(t)}) = f_i ( \bbsym{x}_i) + (\bbsym{\lambda}^{(t)})^\top \bbsym{A}_{i} \bbsym{x}_i \\
++ \frac{\rho}{2} \norm{\bbsym{A}_{i} \bbsym{x}_i + \sum_{j=1, j\neq i}^N \bbsym{A}_{j} \bbsym{x}_j^{(t)} - \bbsym{b}}_2^2 ,
+\end{multlined}
+\end{equation}
+and $\beta \in \RRplus$ is a penalty weight.
 % \end{figure*}
 
 \item Update the dual variables $\bbsym{\lambda}$ by 
@@ -430,7 +443,11 @@ In other words,
 \end{equation}
 \end{itemize}
 
+\Note{Include algorithm pseudo-code.}
+
 \Note{Emphasize that in this algorithm, we only need to solve QP problem, do not need to solve any mixed-integer optimization problem.}
+
+\Note{Discuss how to apply the algorithm to decentralized setting.}
 
 \subsection{Convergence Analysis}
 
@@ -450,9 +467,9 @@ To simplify the notation, we let
 \begin{equation}
 \bbsym{P} = 
 \begin{pmatrix}
-\beta_1 \II + \rho \bbsym{A}_1^\top \bbsym{A}_1 \\
+\beta \II_{n_i} + \rho \bbsym{A}_i^\top \bbsym{A}_i \\
 & \ddots \\
-& & \beta_N \II + \rho \bbsym{A}_N^\top \bbsym{A}_N
+& & \beta \II_{n_N} + \rho \bbsym{A}_N^\top \bbsym{A}_N
 \end{pmatrix}
 \end{equation}
 
@@ -516,8 +533,8 @@ As a result, if the matrix
 \begin{equation}
 \bbsym{R} = 
 \begin{pmatrix}
-\bbsym{P} - \eta \II & \quad \frac{1}{\rho} \bbsym{A}^\top \\
-\frac{1}{\rho} \bbsym{A} & \quad \frac{2-\gamma}{\rho \gamma^2} \II \\
+\bbsym{P} - \eta \II_n & \quad \frac{1}{\rho} \bbsym{A} \\
+\frac{1}{\rho} \bbsym{A} & \quad \frac{2-\gamma}{\rho \gamma^2} \II_m \\
 \end{pmatrix}
 \end{equation}
 is positive definite, then $\{\Phi^{(t)}\}$ sufficiently decrease.
