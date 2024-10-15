@@ -318,6 +318,8 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 
 \subsection{Notations}
 
+Throughout the paper, we will utilize the following notations.
+
 \Note{May have a section about all the notations.}
 
 \subsection{Distributed Mixed-Integer Quadratic Programming}
@@ -325,6 +327,7 @@ The above papers considered MILPs, but the methods cannot be extended to MIQPs. 
 Let consider an optimization problem involving $N$ agents with separable objectives and coupling constraints.
 The optimization problem is given by
 \begin{equation}
+\label{eq:miopt-prb}
 \begin{split}
 \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
 \text{subject to} & \quad \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}_i = \bbsym{b}, \\
@@ -338,23 +341,34 @@ is the local objective function of each \agent{i},
 $\bbsym{Q}_i$, $\bbsym{q}_i$, $\bbsym{A}_{i}$, and $\bbsym{b}$ are the matrices and vectors of coefficients.
 Let $\bbsym{x}^\top = [\bbsym{x}_1^\top, \dots, \bbsym{x}_N^\top]$ be the concatenated vector of optimization variables, and let
 $\bbsym{A} = \big[ \bbsym{A}_1, \dots, \bbsym{A}_N \big]$.
+We consider that $\bbsym{Q}_i$ is positive definite so that $f_i$ is a convex quadratic function.
 
-
-\begin{assumption}
-There exists a saddle point $(\bbsym{x}^{*}, \bbsym{\lambda}^{*})$, \ie it satisfies the KKT conditions
-\begin{equation}
-\begin{split}
-& \bbsym{A}_i^\top \bbsym{\lambda}^{*} \in \partial f_i(\bbsym{x}_i^{*}),\; \forall i = 1, \dots, N, \\
-& \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}^{*}_i = \bbsym{b}
-\end{split}
-\end{equation}
-where $\partial f_i(\bbsym{x}_i)$ denotes subdifferential of $f_i$ at $\bbsym{x}_i$.
-\end{assumption}
-
-  
 \begin{remark}
 Although the problem formulation does not explicitly account for (linear) local constraints, they can be incorporated into the local set $\XXX_i^{\rm{MI}}$. 
 \end{remark}
+
+\begin{assumption}
+The problem \eqref{eq:miopt-prb} is feasible.
+\end{assumption}
+
+We define the relaxed problem for the original problem \eqref{eq:miopt-prb} as follows
+\begin{equation}
+\label{eq:rlx-prb}
+\begin{split}
+\underset{\bbsym{x}_i \in \tilde{\XXX}_i}{\min} & \quad \sum_{i=1}^N \; f_i (\bbsym{x}_i), \\
+\text{subject to} & \quad \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}_i = \bbsym{b}, \\
+\end{split}
+\end{equation}
+where $\tilde{\XXX}_i$ is formed from $\XXX_i^{\rm{MI}}$ by relaxing the integrality constraints.
+
+Since the relaxed problem \eqref{eq:rlx-prb} is a convex QP and it is also feasible, there exists a saddle point $(\bbsym{x}^{*}, \bbsym{\lambda}^{*})$ that satisfies the KKT conditions, \ie there exists $\bbsym{\nu}_i^* \in N_{\tilde{\XXX}_i} (\bbsym{x}_i^{*})$ such that
+\begin{equation}
+\begin{split}
+& \nabla f_i(\bbsym{x}_i^{*}) + \bbsym{A}_i^\top \bbsym{\lambda}^{*} =- \bbsym{\nu}_i^*,\; \forall i = 1, \dots, N, \\
+& \sum_{i=1}^N \bbsym{A}_{i} \bbsym{x}^{*}_i = \bbsym{b}
+\end{split}
+\end{equation}
+  
 
 % \begin{definition}
 % Let $N$ be the total number of agents, $\VVV = \{1, \dots, N\}$ be the set of agents, and $\EEE \subset \VVV \times \VVV$ be the set of communication links.
@@ -373,12 +387,12 @@ Although the problem formulation does not explicitly account for (linear) local 
 
 Discuss about how the formulation covers some other extensions, \eg with inequality constriants, decentralized setup, pairwise coupling constraints. 
 
-\section{Distributed Mixed-Integer Optimization with Proximal ADMM with Sequential Convex Programming}
+\section{Distributed Mixed-Integer Optimization with Proximal ADMM and Sequential Convex Programming}
 
 \subsection{Algorithm}
 
-To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal} with sequential convexification of the integrality constraints as presented follows.
-At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and an real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$ where $\tilde{\XXX}_i$ is formed from $\XXX_i$ by relaxing the integrality constraints.
+To solve the MIQP problem, we combine proximal ADMM \cite{yang2022proximal,deng2017parallel} with sequential convexification of the integrality constraints as presented follows.
+At each iteration $t$, we keep a mixed-integer-valued vector $\bbsym{x}_i^{(t)} \in \XXX_i^{\rm{MI}}$ and a real-valued solution of the relaxed problem $\tilde{\bbsym{x}}_i^{(t)} \in \tilde{\XXX}_i$.
 % We define $\Delta (\tilde{\bbsym{x}}_i, \tilde{\bbsym{x}}_i)$ as the distance function between the real-valued vector $\tilde{\bbsym{x}}_i$ and and the mixed-integer-valued vector $\bbsym{x}_i$.
 % The full details of the distance function are skipped now but can be found in \cite{bertacco2007feasibility}. 
 
@@ -408,7 +422,7 @@ where $\beta_i \in \RRplus$ is a penalty weight.
 \end{equation}
 
 
-\item Compute $\tilde{\bbsym{x}}_i^{(t+1)}$ from $\bbsym{x}_i^{(t+1)}$ by rounding operator (transform a real-valued solution into an integer one). 
+\item Compute $\tilde{\bbsym{x}}_i^{(t+1)}$ from $\bbsym{x}_i^{(t+1)}$ by rounding operator (transform a real-valued solution into a mixed-integer one). 
 In other words,
 \begin{equation}
 \tilde{\bbsym{x}}_i^{(t+1)} = \underset{\bbsym{x}_i \in \XXX_i^{\rm{MI}}}{\argmin} \;
@@ -455,7 +469,7 @@ We consider the following Lyapunov function
 \end{equation}
 where $\eta > 0$.
 The overall idea for the convergence proof is to prove the above Lyapunov function is not increasing over the iterations.
-Thus, in what follows, we prove the sufficient decrease of $\Phi^{(t)}$.
+Thus, in what follows, we prove the e the sufficiently decreasing property of $\Phi^{(t)}$.
 
 \begin{lemma}
 \label{lem:first-ineq}
@@ -469,12 +483,21 @@ For $t \ge 1$, we have
 + \frac{1}{\gamma \rho} \norm{\bbsym{\lambda}^{(t+1)}-\bbsym{\lambda}^{*}}_2^2 \Big) \\
 \ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}}^2
 + \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
-+ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)}).
++ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil^{(t)}-\bbsym{x}^{(t+1)}).
 \end{multlined}
 \end{equation}
 \end{lemma}
 
-The proof of Lemma~\ref{lem:first-ineq} is similar to Lemma 2.1 in \cite{deng2017parallel} and is given in Appendix.
+\begin{proof}
+The optimality condition of \eqref{eq:local_update} implies that there exists $\bbsym{\nu}_i^{(t+1)}$ such that 
+\begin{equation}
+\begin{multlined}
+\bbsym{A}_i^\top \Big( \bbsym{\lambda}^{(t)} + \rho \big( \bbsym{A}_i \bbsym{x}^{(t+1)} - \bbsym{b} + \sum_{j \neq i} \bbsym{A}_j \xtil_j^{(t)} \big) \Big) \\
++ \beta_i (\bbsym{x}^{(t+1)} - \xtil_i^{(t)} ) + \nabla f_i (\bbsym{x}^{(t+1)}) = - \bbsym{\nu}_i^{(t+1)}
+\end{multlined}
+\end{equation}
+
+\end{proof}
 
 \begin{lemma}
 \label{lem:suff-decrease}
@@ -485,8 +508,8 @@ For $t \ge 1$, we have
 \Phi^{(t)} - \Phi^{(t+1)}  \\
 \ge \norm{\xtil^{(t)}-\bbsym{x}^{(t+1)}}_{\bbsym{P}-\eta \II}^2
 + \frac{2-\gamma}{\rho \gamma^2} \norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)}}_2^2 \\
-+ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil-\bbsym{x}^{(t+1)})
-+ \eta \norm{\xtil^{(k)}-\bbsym{x}^{(k)}}_2^2
++ \frac{2}{\gamma} (\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{(t+1)})^\top \bbsym{A} (\xtil^{(t)}-\bbsym{x}^{(t+1)})
++ \eta \norm{\xtil^{(t)}-\bbsym{x}^{(t)}}_2^2
 \end{multlined}
 \end{equation}
 As a result, if the matrix 
@@ -538,7 +561,7 @@ If the parameters $\rho$, $\gamma$, and $\beta$ are chosen such that the followi
 \end{split}
 \end{equation}
 where $e_i$ is the maximum eigenvalue of $\bbsym{A}_i^\top \bbsym{A}_i$, $\epsilon > 0$ is a positive constant,
-then the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converge to $\{\bbsym{x}^{*} , \bbsym{\lambda}^{*} \}$.
+then $\{\bbsym{x}^{(t)} - \tilde{\bbsym{x}}^{(t)}\}$ converge to 0, and the sequence $\{\bbsym{x}^{(t)} , \bbsym{\lambda}^{(t)}\}$ converges.
 \end{theorem}
 
 \begin{proof}
@@ -570,14 +593,18 @@ we have
 
 The conditions \eqref{eq:conditions} ensure that $\frac{2 - \gamma - N \epsilon}{\rho \gamma^2} > 0$ and $\beta_i \II + \rho \bbsym{A}_i^\top \bbsym{A}_i - \eta \II - \frac{\rho}{\epsilon} \bbsym{A}_i^\top \bbsym{A}_i$ is positive definite, which yields $\bbsym{z}^\top \bbsym{R} \bbsym{z} > 0$ for any $\bbsym{z} \in \RR^{n+m}, \bbsym{z}\neq \bbsym{0}$, or $\bbsym{R}$ is positive definite.
 From Lemma~\ref{lem:suff-decrease}, $\{\Phi^{(t)}\}$ achieves sufficient decrease.
-Thus, $\{\Phi^{(t)}\}$ converges to $0$ and from \eqref{eq:Lya-fcn}, $\norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}} \rightarrow 0$, $\norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}} \rightarrow 0$, and $\norm{\xtil^{(t)} - \bbsym{x}^{(t)}} \rightarrow 0$. The proof is complete.
+% Thus, $\{\Phi^{(t)}\}$ converges to $0$ and from \eqref{eq:Lya-fcn}, $\norm{\bbsym{x}^{(t)}-\bbsym{x}^{*}} \rightarrow 0$, $\norm{\bbsym{\lambda}^{(t)}-\bbsym{\lambda}^{*}} \rightarrow 0$, and $\norm{\xtil^{(t)} - \bbsym{x}^{(t)}} \rightarrow 0$. The proof is complete.
 \end{proof}
+
+\Note{Can we also prove the the converged point is a stationary point?}
 
 \section{Numerical Studies}
 
 We illustrate the proposed algorithm by the example presented in \cite{le2024distributed}.
 
 \section{Conclusions}
+
+Our future work will consider the algorithms for solving mixed-integer nonlinear programming. 
 
 
 \begin{comment}
